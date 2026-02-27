@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=Russo+One&display=swap');
+
+@import 'tailwindcss';
+
+:root {
+  font-family: 'PT Sans', sans-serif;
+  color: #f8fbff;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(248, 191, 77, 0.34), transparent 32%),
+    radial-gradient(circle at 12% 12%, rgba(16, 99, 214, 0.6), transparent 34%),
+    radial-gradient(circle at 90% 20%, rgba(10, 54, 128, 0.72), transparent 35%),
+    linear-gradient(165deg, #03102a 0%, #08265a 52%, #021837 100%);
+  min-height: 100%;
+}
+
+body,
+#app {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.show-header {
+  background:
+    linear-gradient(110deg, rgba(6, 40, 94, 0.96), rgba(17, 91, 194, 0.86)),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.06) 8px,
+      rgba(255, 255, 255, 0) 8px,
+      rgba(255, 255, 255, 0) 16px
+    );
+}
+
+.show-counter {
+  background: linear-gradient(180deg, rgba(255, 189, 62, 0.24), rgba(255, 189, 62, 0.08));
+  border: 1px solid rgba(255, 205, 93, 0.45);
+}
+
+.panel-shell {
+  background: linear-gradient(170deg, rgba(10, 50, 116, 0.95), rgba(5, 28, 72, 0.95));
+  color: #f8fbff;
+}
+
+.mode-switch {
+  background: linear-gradient(170deg, rgba(9, 40, 95, 0.88), rgba(5, 25, 58, 0.88));
+}
+
+.board-shell {
+  border: 2px solid rgba(255, 191, 71, 0.6);
+  background:
+    radial-gradient(circle at 50% -35%, rgba(255, 205, 96, 0.22), transparent 40%),
+    linear-gradient(180deg, #0d346f 0%, #07224f 55%, #061a3f 100%);
+  box-shadow:
+    0 25px 55px rgba(2, 10, 33, 0.45),
+    inset 0 0 0 2px rgba(255, 220, 142, 0.16);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 56px;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  border-radius: 14px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 197, 90, 0.52);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.board-row:hover {
+  transform: translateY(-1px);
+}
+
+.board-row-hidden {
+  background: linear-gradient(180deg, #15458c 0%, #0e336d 100%);
+  color: #ffc963;
+}
+
+.board-row-opened {
+  background: linear-gradient(180deg, #f5b64b 0%, #ea9f2b 100%);
+  color: #2d1800;
+  box-shadow: inset 0 0 0 1px rgba(255, 251, 227, 0.42);
+}
+
+.board-row-flip {
+  animation: flip-open 620ms ease;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+.row-index,
+.row-score {
+  font-family: 'Russo One', sans-serif;
+  font-size: 1.35rem;
+  text-align: center;
+}
+
+.row-answer {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(12, 46, 104, 0.95), rgba(8, 32, 73, 0.95));
+  padding: 12px 14px;
+  color: #ecf4ff;
+}
+
+.score-row-leading {
+  border-color: rgba(255, 197, 90, 0.8);
+  background: linear-gradient(180deg, rgba(245, 182, 75, 0.95), rgba(234, 159, 43, 0.95));
+  color: #2c1800;
+}
+
+@keyframes flip-open {
+  0% {
+    transform: perspective(700px) rotateX(95deg) scale(0.95);
+    filter: brightness(1.35);
+  }
+  45% {
+    transform: perspective(700px) rotateX(-8deg) scale(1.03);
+    filter: brightness(1.1);
+  }
+  100% {
+    transform: perspective(700px) rotateX(0deg) scale(1);
+    filter: brightness(1);
+  }
+}
