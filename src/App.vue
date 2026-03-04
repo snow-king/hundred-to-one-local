@@ -13,6 +13,7 @@ import ViewModeSwitch from './components/ViewModeSwitch.vue'
 import rawPacks from './data/packs.json'
 
 const STORAGE_KEY = 'hundred-to-one:v1'
+const COMPLETED_PACKS_STORAGE_KEY = 'hundred-to-one:completed-packs:v1'
 const DEFAULT_PACK_ID = ((rawPacks as QuestionPack[])[0]?.id ?? 'classic') as string
 
 const toast = useToast()
@@ -22,6 +23,7 @@ const viewMode = ref<ViewMode>('split')
 const recentlyOpened = ref<Record<string, boolean>>({})
 const isApplyingRemoteState = ref(false)
 const selectedPackId = ref<string>(DEFAULT_PACK_ID)
+const completedPackIds = ref<string[]>([])
 
 const state = ref<GameState>({
   status: 'setup',
@@ -41,9 +43,11 @@ const playerOptions = computed(() =>
 
 const packs = computed(() => rawPacks as QuestionPack[])
 
+const completedPackIdSet = computed(() => new Set(completedPackIds.value))
+
 const packOptions = computed(() =>
   packs.value.map(pack => ({
-    label: `${pack.title} (${pack.questions.length})`,
+    label: `${pack.title} (${pack.questions.length})${completedPackIdSet.value.has(pack.id) ? ' · ✓ пройден' : ''}`,
     value: pack.id,
   })),
 )
@@ -159,6 +163,38 @@ function createNewGame() {
   hasSavedGame.value = false
 }
 
+function loadCompletedPacks() {
+  const loaded = localStorage.getItem(COMPLETED_PACKS_STORAGE_KEY)
+  if (!loaded) {
+    completedPackIds.value = []
+    return
+  }
+  try {
+    const parsed = JSON.parse(loaded) as unknown
+    if (!Array.isArray(parsed)) {
+      completedPackIds.value = []
+      return
+    }
+    completedPackIds.value = parsed.filter(value => typeof value === 'string')
+  }
+  catch {
+    completedPackIds.value = []
+    localStorage.removeItem(COMPLETED_PACKS_STORAGE_KEY)
+  }
+}
+
+function saveCompletedPacks() {
+  localStorage.setItem(COMPLETED_PACKS_STORAGE_KEY, JSON.stringify(completedPackIds.value))
+}
+
+function markPackCompleted(packId: string) {
+  if (completedPackIdSet.value.has(packId)) {
+    return
+  }
+  completedPackIds.value = [...completedPackIds.value, packId]
+  saveCompletedPacks()
+}
+
 function continueSavedGame() {
   const loaded = localStorage.getItem(STORAGE_KEY)
   if (!loaded) {
@@ -171,6 +207,9 @@ function continueSavedGame() {
       state.value.selectedPlayerId = state.value.players[0]?.id ?? null
     }
     selectedPackId.value = state.value.selectedPackId
+    if (state.value.status === 'finished') {
+      markPackCompleted(state.value.selectedPackId)
+    }
     if (state.value.players.length === 4) {
       setupNames.value = state.value.players.map(player => player.name)
     }
@@ -275,6 +314,7 @@ function nextQuestion() {
     return
   }
   state.value.status = 'finished'
+  markPackCompleted(state.value.selectedPackId)
 }
 
 function resolvePlayerName(playerId: number): string {
@@ -297,6 +337,7 @@ function loadSavedFlag() {
   }
 }
 
+loadCompletedPacks()
 loadSavedFlag()
 
 onMounted(() => {
@@ -311,6 +352,11 @@ onUnmounted(() => {
 })
 
 function handleStorageSync(event: StorageEvent) {
+  if (event.key === COMPLETED_PACKS_STORAGE_KEY) {
+    loadCompletedPacks()
+    return
+  }
+
   if (event.key !== STORAGE_KEY) {
     return
   }

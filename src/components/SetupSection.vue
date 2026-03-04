@@ -40,7 +40,7 @@ const emit = defineEmits<{
               :options="props.packOptions"
               option-label="label"
               option-value="value"
-              placeholder="Выберите пакет"
+              placeholder="Выберите набор из 2 вопросов"
               fluid
               @update:model-value="(value) => emit('updatePack', value)"
             />
@@ -48,6 +48,10 @@ const emit = defineEmits<{
 
           <p class="rounded-xl border border-amber-300/40 bg-[#0a2d63] px-3 py-2 text-sm text-white/85">
             {{ props.activePackDescription }}
+          </p>
+
+          <p class="text-xs text-amber-100/80">
+            Пакеты с отметкой "✓ пройден" уже были сыграны в этом браузере.
           </p>
 
           <div
