@@ -100,6 +100,22 @@ function parseViewMode(value: string | null): ViewMode {
   return 'split'
 }
 
+function openBoardWindow() {
+  const url = new URL(window.location.href)
+  url.searchParams.set('view', 'board')
+  const boardWindow = window.open(url.toString(), '_blank', 'noopener,noreferrer,width=1600,height=900')
+  if (!boardWindow) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Окно заблокировано',
+      detail: 'Разрешите всплывающие окна для открытия табло в отдельном окне.',
+      life: 2600,
+    })
+    return
+  }
+  boardWindow.focus()
+}
+
 function getAnswerKey(questionId: number, answerIndex: number): string {
   return `${questionId}-${answerIndex}`
 }
@@ -468,9 +484,14 @@ watch(
     />
 
     <section v-else-if="state.status === 'playing'" class="space-y-4">
-      <ViewModeSwitch v-if="!isBoardOnlyMode" :view-mode="viewMode" @update="(mode) => (viewMode = mode)" />
+      <ViewModeSwitch
+        v-if="!isBoardOnlyMode"
+        :view-mode="viewMode"
+        @update="(mode) => (viewMode = mode)"
+        @open-board-window="openBoardWindow"
+      />
 
-      <div class="grid gap-6" :class="viewMode === 'split' ? 'lg:grid-cols-[2.1fr_1fr]' : 'grid-cols-1'">
+      <div class="grid gap-6" :class="viewMode === 'control' ? 'grid-cols-1' : 'lg:grid-cols-[2.1fr_1fr]'">
         <div class="space-y-6">
           <BoardPanel
             v-show="viewMode !== 'control'"
@@ -497,10 +518,10 @@ watch(
         </div>
 
         <ScorePanel
-          v-show="viewMode !== 'board'"
+          v-show="viewMode !== 'control'"
           :players="rankedPlayers"
           title="Табло"
-          :show-reset="true"
+          :show-reset="viewMode !== 'board'"
           @reset="resetGame"
         />
       </div>

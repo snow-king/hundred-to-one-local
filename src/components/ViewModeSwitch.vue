@@ -8,6 +8,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   update: [mode: ViewMode]
+  openBoardWindow: []
 }>()
 </script>
 
@@ -34,6 +35,13 @@ const emit = defineEmits<{
         size="small"
         :severity="props.viewMode === 'control' ? 'warn' : 'secondary'"
         @click="emit('update', 'control')"
+      />
+      <Button
+        label="Табло в окне"
+        icon="pi pi-external-link"
+        size="small"
+        severity="contrast"
+        @click="emit('openBoardWindow')"
       />
     </div>
   </div>

@@ -45,7 +45,7 @@ function answerKey(questionId: number | undefined, index: number): string {
       >
         <span class="row-index">{{ index + 1 }}</span>
         <span class="row-answer">{{ answer.opened ? answer.text : 'СКРЫТО' }}</span>
-        <span class="row-score">{{ answer.opened ? answer.points : '?' }}</span>
+        <span class="row-score">{{ answer.opened ? `${answer.points}%` : '?' }}</span>
       </div>
     </div>
   </div>
